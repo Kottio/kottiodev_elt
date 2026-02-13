@@ -1,0 +1,7 @@
+.env
+venv/
+
+__pychache__/
+.ipynb_checkpoints/
+
+test.txt
