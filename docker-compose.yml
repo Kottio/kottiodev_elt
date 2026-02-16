@@ -1,0 +1,5 @@
+services:
+  mon-site:
+    image: nginx
+    ports:
+      - "8080:80"
