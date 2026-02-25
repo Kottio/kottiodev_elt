@@ -1,5 +1,6 @@
 .env
 venv/
+venv_Test/
 
 __pychache__/
 .ipynb_checkpoints/
