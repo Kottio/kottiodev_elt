@@ -15,6 +15,13 @@ def load_all_data(df_movies_clean,df_movies_genre_clean ):
   df_movies_clean.to_sql('movies',engine, if_exists='append', index=False )
   df_movies_genre_clean.to_sql('movies_genres',engine, if_exists='append', index=False )
 
+
   print("Writing Success")
   top_movies = pd.read_sql("SELECT * FROM movies ORDER BY popularity DESC LIMIT 1;", engine)
   print("Accessing first row", top_movies )
+
+#   with engine.connect() as conn: 
+#       print("Creating Movie clean")
+#       with conn.begin(): 
+#           conn.execute(text("REFRESH MATERIALIZED VIEW movies_clean;"))
+    
