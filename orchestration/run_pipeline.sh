@@ -21,17 +21,17 @@ if [ $python_status_code -eq 0 ]; then
   echo "==="
 
   echo "=== Refreshing dashboard View ==="
-  docker_psql_ouput=$(docker exec postgres psql -U admin -d analytics_db -c "REFRESH MATERIALIZED VIEW movies_dashboard;" 2>&1)
+  docker_psql_output=$(docker exec postgres psql -U admin -d analytics_db -c "REFRESH MATERIALIZED VIEW movies_dashboard;" 2>&1)
   docker_psql_status_code=$?
 
   if [ $docker_psql_status_code -eq 0 ]; then 
     echo "✅ Dashboard Refresh Successful"
     echo "==="
-    echo "$docker_psql_ouput"
+    echo "$docker_psql_output"
     echo "==="
 
-    
-    echo "$psql_ouput Movies in the dashboard"
+    psql_output=$(docker exec postgres psql -U admin -d analytics_db -t -c "SELECT COUNT(DISTINCT id) FROM movies_dashboard;")
+    echo "$psql_output Movies in the dashboard"
 
   else 
     echo "❌ Dashboard Refresh Failed"
@@ -43,7 +43,7 @@ if [ $python_status_code -eq 0 ]; then
   fi
 
 else
-  echo "ETL Failed"
+  echo "❌ ETL Failed"
   echo "=====================" >> $ERROR_LOG
   echo "$(date) == Failed Pipeline : Python ETL" >> $ERROR_LOG
   echo "$python_output" | grep "Error" >> $ERROR_LOG
