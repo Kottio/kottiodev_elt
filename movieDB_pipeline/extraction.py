@@ -8,32 +8,39 @@ def extraction_movie_data():
 
   all_movies = []
   
-  print("--Start Extraction")
-  for page_num in range(1,4): 
+#   print("--Start Extraction")
+
+  for page_num in range(1,2): 
       url =f"https://api.themoviedb.org/3/movie/popular?page={page_num}" 
       response = requests.get(url,headers=headers)
+      if response.status_code != 200: 
+         raise Exception(f"API error, Status {response.status_code} - {response.text}")
+      
       data = response.json() 
       results = data['results']
+      
+
 
       movie_results = get_movies_results(results)
       all_movies.extend(movie_results)
 
   df_movies = pd.DataFrame(all_movies) 
 
-  print("--Movie Extracted")
+#   print("--Movie Extracted")
+ 
 
 
   movies_genres=[]
   movies_details = []
 
-  print("--Start movie Genre extraction")
+#   print("--Start movie Genre extraction")
   for movie_id in df_movies.id: 
       movie_genres,movie_details_data = get_movies_details(movie_id) 
       movies_genres.extend(movie_genres) 
       movies_details.append(movie_details_data) 
 
 
-  print('--Movie Genre extracted')
+#   print('--Movie Genre extracted')
   df_movie_genre = pd.DataFrame(movies_genres)  
   df_movies_details = pd.DataFrame(movies_details) 
   df_all_movies = df_movies.merge(df_movies_details, left_on = "id", right_on= "movie_id") 
@@ -43,5 +50,5 @@ def extraction_movie_data():
   return df_all_movies, df_movie_genre
 
 if __name__ == "__main__":
-   print("extraction of the Data") 
+#    print("extraction of the Data") 
    extraction_movie_data()

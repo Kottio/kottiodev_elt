@@ -5,6 +5,7 @@ import requests
 from sqlalchemy import create_engine, text 
 
 load_dotenv()
+MOVIEDB_TOKEN = os.getenv("MOVIE_DB_TOKEN")
 
 host = os.getenv("DB_HOST")
 port = os.getenv("DB_PORT")
@@ -14,7 +15,16 @@ password = os.getenv("DB_PASSWORD")
 
 DATABASE_URL= f"postgresql://{user}:{password}@{host}:{port}/{dbname}"
 
-MOVIEDB_TOKEN = os.getenv("MOVIE_DB_TOKEN")
+
+headers= {
+    "accept": "application/json",
+    "Authorization": f"Bearer {MOVIEDB_TOKEN}"
+}
+
+all_movies = []
+movies_details = []
+movies_genres = []
+
 
 
 def get_movies_results(results):
@@ -58,15 +68,9 @@ def get_movies_details(movie_id):
     }
 
     return  movie_genres, movie_details
-
-headers= {
-    "accept": "application/json",
-    "Authorization": f"Bearer {MOVIEDB_TOKEN}"
-}
-
-all_movies = []
-
-
+    
+    
+    
 for page_num in range(1,4): 
     url =f"https://api.themoviedb.org/3/movie/popular?page={page_num}" 
     response = requests.get(url,headers=headers)
@@ -79,8 +83,6 @@ for page_num in range(1,4):
 df_movies = pd.DataFrame(all_movies) 
 
 
-movies_genres=[]
-movies_details = []
 
 for movie_id in df_movies.id: 
     movie_genres,movie_details_data = get_movies_details(movie_id) 
@@ -94,13 +96,36 @@ df_all_movies = df_movies.merge(df_movies_details, left_on = "id", right_on= "mo
 df_all_movies = df_all_movies.drop("movie_id", axis=1) 
 
 
+
+
+def clean_data(df_all_movies,df_movie_genre ): 
+    df_movies_clean = df_all_movies.drop_duplicates(subset=['id'])
+    df_movies_clean = df_movies_clean.dropna(subset=['id'])
+    df_movies_clean = df_movies_clean.dropna(subset=['title'])
+    df_movies_clean = df_movies_clean[df_movies_clean['title'].str.strip() != '']
+    df_movies_clean = df_movies_clean[df_movies_clean['vote_count'] >= 5 ]
+
+    
+    df_genre_clean  = df_movie_genre.dropna(subset=['movie_id', 'genre'])
+    df_genre_clean = df_genre_clean[df_genre_clean['genre'].str.strip() != '']
+
+    
+    valid_ids = set(df_movies_clean['id'])
+    df_genre_clean = df_genre_clean[df_genre_clean['movie_id'].isin(valid_ids)]
+    
+    return df_movies_clean, df_genre_clean
+    
+df_movies_clean, df_genre_clean=clean_data(df_all_movies, df_movie_genre)
+
 engine = create_engine(DATABASE_URL) 
+
 with engine.connect() as conn: 
     with conn.begin(): 
         conn.execute(text("DELETE FROM movies_genres;"))
         conn.execute(text("DELETE FROM movies;"))
         
-df_all_movies.to_sql('movies',engine, if_exists='append', index=False )
-df_movie_genre.to_sql('movies_genres',engine, if_exists='append', index=False )
+ 
+df_movies_clean.to_sql('movies',engine, if_exists='append', index=False )
+df_genre_clean.to_sql('movies_genres',engine, if_exists='append', index=False )
 
 top_movies = pd.read_sql("SELECT * FROM movies ORDER BY popularity DESC LIMIT 10;", engine)

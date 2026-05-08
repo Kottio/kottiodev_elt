@@ -1,0 +1,15 @@
+Python did not work the error is Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    print(4/0)
+          ~^~
+ZeroDivisionError: division by zero
+Python did not work at mar. 24 mars 2026 16:26:26 CET, the error is: Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    print(4/0)
+          ~^~
+ZeroDivisionError: division by zero
+Python Script did not work at mar. 24 mars 2026 16:36:49 CET, error : NameError: name 'var' is not defined. Did you mean: 'vars'?
+--------------------------
+Python Script did not work at mar. 24 mars 2026 16:37:22 CET, error : NameError: name 'var' is not defined. Did you mean: 'vars'?
+--------------------------
+Python Script did not work at mar. 24 mars 2026 16:37:25 CET, error : NameError: name 'var' is not defined. Did you mean: 'vars'?

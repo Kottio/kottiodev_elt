@@ -42,6 +42,9 @@ def get_movies_results(results):
 def get_movies_details(movie_id): 
     url = f"https://api.themoviedb.org/3/movie/{movie_id}"
     response = requests.get(url,headers=headers)
+    if response.status_code != 200: 
+         raise Exception(f"API error, Status {response.status_code} - {response.text}")
+    
     data = response.json() 
     movie_genres =[] 
 
