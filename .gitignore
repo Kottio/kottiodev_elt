@@ -2,6 +2,6 @@
 venv/
 venv_Test/
 
-__pychache__/
+__pycache__/
 .ipynb_checkpoints/
 

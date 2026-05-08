@@ -4,14 +4,11 @@ FROM movies
 ORDER BY popularity DESC 
 LIMIT 5;
 
-
 -- Films rentables (revenue > budget)
 SELECT title, budget, revenue, (revenue - budget) as profit
 FROM movies 
 WHERE revenue < budget AND revenue > 0 
 ORDER BY profit;
-
-
 
 -- Films récents avec bonne note
 SELECT title, release_date, vote_average
@@ -46,7 +43,7 @@ SELECT
     ELSE 'Small Budget'
   END as budget_category,
   COUNT(*) as nb_films,
-  AVG(revenue::float / NULLIF(budget, 0)) as avg_roi
+  -- AVG(revenue::float / NULLIF(budget, 0)) as avg_roi
 FROM movies
 WHERE budget > 0
 GROUP BY budget_category
