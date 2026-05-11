@@ -36,20 +36,6 @@ echo $python_output
 
 # Codes de Sortie & Vérification de Statut
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   # [ 1 -eq 2 ]
   # echo "Le status code est: $?"
   # echo $?
